@@ -31,9 +31,11 @@ Suggested milestones for incremental development:
  - Fix main() to use the extracted_names list
 """
 
+import os
 import sys
 import re
 import argparse
+import json
 
 
 def extract_names(filename):
@@ -43,10 +45,24 @@ def extract_names(filename):
     the name-rank strings in alphabetical order.
     ['2006', 'Aaliyah 91', 'Aaron 57', 'Abagail 895', ...]
     """
+    words = []
     names = []
-    # +++your code here+++
-    return names
+    words.sort(reverse=True)
+    names.sort(reverse=True)
+    with open('baby1990.html.summary') as f:
+        # data = json.load(f)
+    for names in data['baby1990']:
+        print(f.mode)
 
+    f.close()
+
+
+# Extract all the text from the file and print it
+# *   Find and extract the year and print it
+# *   Extract the names and rank numbers and print them
+# *   Get the names data into a dict and print it
+# *   Build the `[year, 'name rank', ... ]` list and print it
+# *   Fix `main()` to use the extracted_names list
 
 def create_parser():
     """Create a command line parser object with 2 argument definitions."""
@@ -67,7 +83,8 @@ def main(args):
     # Run the parser to collect command line arguments into a
     # NAMESPACE called 'ns'
     ns = parser.parse_args(args)
-
+    print(ns)
+    sys.exit(1)
     if not ns:
         parser.print_usage()
         sys.exit(1)
