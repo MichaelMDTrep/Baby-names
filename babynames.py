@@ -6,6 +6,7 @@
 # Copyright 2010 Google Inc.
 # Licensed under the Apache License, Version 2.0
 # http://www.apache.org/licenses/LICENSE-2.0
+__author__ = 'Michael Trepanier'
 
 """
 Define the extract_names() function below and change main()
@@ -32,7 +33,6 @@ Suggested milestones for incremental development:
 """
 
 import sys
-import re
 import argparse
 
 
@@ -44,7 +44,56 @@ def extract_names(filename):
     ['2006', 'Aaliyah 91', 'Aaron 57', 'Abagail 895', ...]
     """
     names = []
+    names_only = []
     # +++your code here+++
+
+    with open(filename, 'r') as file:
+        html = file.read().replace('\n', "")
+    # print(html)
+
+    # first get the year
+    parts = html.split('Popularity in ')
+    # print(parts)
+    parts = parts[1].split('</h')
+    year = parts[0]
+    # print(year)
+    names.append(year)
+
+    str_list = html.split('<tr align="right">')
+    # print(str_list)
+    for str in str_list:
+        # print(str)
+        if (str.startswith('<td>')):
+            # this is ignore the first part of the file before the names
+
+            # this is to handle the stuff
+            # at the end of the file after the names
+            if (not str.endswith('</td>')):
+                parts = str.split('<tr>')
+                str = parts[0]
+
+            # print(str)
+            if (str.endswith('</td>')):
+                str = str[4:-5]
+            else:
+                str = str[4:-10]
+            # print(str)
+            fields = str.split('</td><td>')
+            rank = fields[0]
+            boy_name = fields[1]
+            girl_name = fields[2]
+            # check to make sure the name hasn't already appeared in the file
+            if (boy_name not in names_only):
+                names.append(boy_name+' '+rank)
+                names_only.append(boy_name)
+
+            # check to make sure the name hasn't already appeared in the file
+            if (girl_name not in names_only):
+                names.append(girl_name+' '+rank)
+                names_only.append(girl_name)
+
+    names.sort()
+    # print(names)
     return names
 
 
@@ -67,6 +116,7 @@ def main(args):
     # Run the parser to collect command line arguments into a
     # NAMESPACE called 'ns'
     ns = parser.parse_args(args)
+    # print(ns)
 
     if not ns:
         parser.print_usage()
@@ -83,6 +133,15 @@ def main(args):
     # or to write the list to a summary file (e.g. `baby1990.html.summary`).
 
     # +++your code here+++
+    for file in file_list:
+        name_list = extract_names(file)
+        names_str = "\n".join(name_list)
+        if (create_summary):
+            f = open(file+".summary", "w")
+            f.write(names_str)
+            f.close()
+        else:
+            print(names_str)
 
 
 if __name__ == '__main__':
